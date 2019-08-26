@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" content="text/html" http-equiv="content-type"/>
+        <title>jquery</title>
+        <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script>
+            /*<![CDATA[*/
+            // postData方法进行组装数据
+            function postData() {
+                //获取输入的数据
+                var data='no='+$('#no').val() + '&quantity='+$('#quantity').val() + '&date='+$('#date').val();
+                $.ajax({
+                    type:'POST',            //Post传输数据时，不需要在URL中显示出来，而Get方法要在URL中显示
+                    url:'/postData',        //当前页地址,发送请求的地址
+                    data:data,              //发送到服务器的数据
+                    success:function (message) {   //请求成功后的回调函数,参数：由服务器返回，并根据 dataType 参数进行处理后的数据；描述状态的字符串
+                        console.log("postData:"+message);
+                    },
+                    error:function () {     //请求失败时调用此函数
+                        alert('Error!')
+                    }
+                });
+            }
+
+            //postJson组装Json报文
+            function postJson() {
+                //组装Json格式数据
+                var data={
+                    no:$('#no').val(),
+                    quantity:$('#quantity').val(),
+                    date:$('#date').val()
+                };
+                $.ajax({
+                    type:'POST',                                    //Post传输数据时，不需要在URL中显示出来，而Get方法要在URL中显示
+                    contentType:'application/json;charset=UTF-8',   //定义发送请求的数据格式为JSON
+                    url:'/postJson',                                //当前页地址,发送请求的地址
+                    data:JSON.stringify(data),                      //将JavaScript值转换为JSON字符串
+                    dataType:'JSON',                                //定义回调响应的数据格式为JSON
+                    success:function (message) {
+                        console.log("postJson:"+message);
+                    },
+                    error:function () {
+                        alert('Error!');
+                    }
+                });
+            }
+            /*]]>*/
+        </script>
+    </head>
+    <body>
+        no:
+        <input id="no" value="No.123456"/> <br/>
+        quantity:
+        <input id="quantity" value="100"/> <br/>
+        date:
+        <input id="date" value="2019-08-23"/> <br/>
+        <input value="postData" type="button" onclick="postData()"/> <br/>
+        <input value="postJson" type="button" onclick="postJson()"/>
+    </body>
+</html>

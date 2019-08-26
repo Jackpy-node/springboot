@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>angularJS</title>
+        <!--需要点击连接进行download,否则angularJS并不会生效-->
+        <script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+        <script>
+            var MainApp=angular.module("MainApp",[]);    //定义了AngularJS应用
+            MainApp.controller('MainController',function ($scope,$http) {   //function中的参数为AngularJS内置服务
+                $scope.data={
+                    no:'No.123456789',
+                    quantity:'1000',
+                    date:'2019-08-26'
+                };
+                $scope.postJson = function () {
+                    $http({
+                        url:'/postJson',
+                        method:'POST',
+                        data:$scope.data
+                    }).success(function (message) {
+                       $scope.responseBody=message;
+                    });
+                }
+            });
+        </script>
+    </head>
+    <body ng-app="MainApp" ng-controller="MainController">
+        no:
+        <input id="no" ng-model="data.no"/><br/>
+        quantity:
+        <input id="quantity" ng-model="data.quantity"/><br/>
+        date:
+        <input id="date" ng-model="data.date"/><br/>
+        <input value="postJson" type="button" ng-click="postJson()"/><br/>
+        <div>
+            {{responseBody}}
+        </div>
+    </body>
+</html>
