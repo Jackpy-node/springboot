@@ -10,6 +10,7 @@ import java.util.Date;
  * @discription: 实体类
  **/
 public class Order {
+    private String id;
     private String no;
     private Date date;
     private int quantity;
@@ -36,5 +37,13 @@ public class Order {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

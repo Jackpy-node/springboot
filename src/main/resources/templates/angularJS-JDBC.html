@@ -1,10 +1,177 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/html">
     <head>
-        <meta charset="UTF-8">
-        <title>$Title$</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>Spring boot——结合JDBC</title>
+        <!--需要点击连接进行download,否则angularJS并不会生效-->
+        <script src="https://cdn.staticfile.org/angular.js/1.5.6/angular.min.js"></script>
+        <link href="angularJS-JDBC.css" type="text/css" rel="stylesheet">
+        <script>
+            var MainApp = angular.module("MainApp", []);    //定义了AngularJS应用
+            MainApp.controller('MainController', function ($scope, $http) {   //function中的参数为AngularJS内置服务
+                $scope.order = {};
+                $scope.rows = [];
+                //插入
+                $scope.Insert = function () {
+                    $http({
+                        url: '/InsertOrUpdate',
+                        method: 'POST',
+                        data: {
+                            'no': $scope.order.no,
+                            'date': $scope.order.date,
+                            'quantity': $scope.order.quantity
+                        },
+                    }).success(function (message) {
+                        $scope.responseBody = message;
+                        console.log("message:" + message.order.date);
+                        $scope.responseBody = message;
+                        if (message.order == null) {
+                            alert("请输入数据！");
+                        } else {
+                            $scope.add(message.order)
+                            //alert("新增成功！");
+                        }
+                    });
+                }
+
+                //新增成功之后更新界面数据
+                $scope.add = function (order) {
+                    //$scope.rows.splice($scope.rows.length+1, 0, order); //自动更新页面
+                    $scope.rows.push(order); //自动更新页面
+                    return;
+                }
+
+                //删除
+                $scope.Delete = function (id) {
+                    $http({
+                        url: '/Delete?id=' + id,
+                        method: 'POST',
+                    }).success(function (msg) {
+                        $scope.remove(msg.id);
+                        //alert("删除成功！");
+                    });
+                }
+
+                //删除成功之后移除界面数据
+                $scope.remove = function (id) {
+                    for (var i in $scope.rows) {
+                        //属性检查：检查子元素与原集合中元素属性是否一致
+                        if ($scope.rows.hasOwnProperty(i)) {
+                            var row = $scope.rows[i];
+                            if (id == row.id) {
+                                $scope.rows.splice(Number(i), 1);
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                //修改
+                $scope.Edit = function(id) {
+                    for ( var i in $scope.rows) {
+                        var row = $scope.rows[i];
+                        if (id == row.id) {
+                            $scope.order = row;
+                            $scope.order.date=new Date($scope.order.date);
+                            console.log("date",row.date);
+                            $scope.rows = [];
+                            //初始化载入数据
+                            $http({
+                                url: '/SelectAll',
+                                method: 'POST'
+                            }).success(function (rows) {
+                                for (var i in rows) {
+                                    var row = rows[i];
+                                    $scope.rows.push(row);
+                                }
+                            });
+                            return;
+                        }
+                    }
+                }
+
+                //保存修改后数据
+                $scope.Update = function() {
+                    $http({
+                        url : '/InsertOrUpdate',
+                        method : 'POST',
+                        data: $scope.order,
+                    }).success(function(msg) {
+                        //保存成功后更新数据
+                        console.log("id:",msg.order.id);
+                        $scope.get(msg.order.id);
+                    });
+                }
+
+                //重新加载修改后数据
+                $scope.get = function(id) {
+                    $http({
+                        url : '/SelectOne?id=' + id,
+                        method : 'POST',
+                    }).success(function(order) {
+                        for ( var i in $scope.rows) {
+                            var row = $scope.rows[i];
+                            if (order.id == row.id) {
+                                row=order;
+                                $scope.rows.push(order);
+                                $scope.rows.splice(Number(i), 1);
+                                return;
+                            }
+                        }
+
+                    });
+                }
+
+                //初始化载入数据
+                $http({
+                    url: '/SelectAll',
+                    method: 'POST'
+                }).success(function (rows) {
+                    for (var i in rows) {
+                        var row = rows[i];
+                        $scope.rows.push(row);
+                    }
+                });
+            });
+        </script>
     </head>
-    <body>
-        $END$
+    <body ng-app="MainApp" ng-controller="MainController" style="font-family: 华文楷体">
+        <h1>SpringBoot——结合JDBC</h1>
+        <h3>清单信息</h3>
+        <input id="id" type="hidden" ng-model="order.id"/>
+        <table cellspacing="2">
+            <tr>
+                <td>编号：</td>
+                <td><input id="no" ng-model="order.no"/></td>
+                <td>日期：</td>
+                <td><input id="date" ng-model="order.date" type="date"/></td>
+                <td>数量：</td>
+                <td><input id="quantity" ng-model="order.quantity"/></td>
+            </tr>
+        </table>
+        <br/>
+        <input style="border-color: #5060b2; border-radius: 5px; width: 60px;height: 30px" type="button" value="新增" ng-click="Insert()"/>
+        <input style="border-color: #5060b2; border-radius: 5px; width: 60px;height: 30px" type="button" value="更新" ng-click="Update()"/>
+        <br/>
+        <br/>
+        <h3>清单列表</h3>
+        <table cellspacing="2" style="background-color: cadetblue">
+            <tr style="text-align: center; BACKGROUND-COLOR: #F4FAFF; font-weight: bold; height: 30px">
+                <td width="160px">操作</td>
+                <td width="150px">编号</td>
+                <td width="150px">日期</td>
+                <td width="150px">数量</td>
+            </tr>
+            <tr ng-repeat="row in rows" bgcolor='#F4FAFF' style="height: 40px">
+                <td align="center">
+                    <input style="border-color: #5060b2; border-radius: 5px; width: 40%;height: 30px"
+                           ng-click="Edit(row.id)" value="修改" type="button"/>
+                    <input style="border-color: #5060b2; border-radius: 5px; width: 40%;height: 30px"
+                           ng-click="Delete(row.id)" value="删除" type="button"/></td>
+                <td align="center">{{row.no}}</td>
+                <td align="center">{{row.date}}</td>
+                <td align="center">{{row.quantity}}</td>
+            </tr>
+        </table>
     </body>
 </html>

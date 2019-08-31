@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- 从高到地低 OFF 、 FATAL 、 ERROR 、 WARN 、 INFO 、 DEBUG 、 TRACE 、 ALL -->
+<!-- 日志输出规则  根据当前ROOT 级别，日志输出时，级别高于root默认的级别时  会输出 -->
+<!-- 以下  每个配置的 filter 是过滤掉输出文件里面，会出现高级别文件，依然出现低级别的日志信息，通过filter 过滤只记录本级别的日志-->
+
+<!--属性描述:
+    scan:性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true
+    scanPeriod:设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。
+    debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。
+-->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!-- 定义日志文件 输入位置 -->
+    <property name="logPath" value="./logs"/>
+    <!-- 日志最大的历史 30天 -->
+    <property name="maxHistory" value="30"/>
+
+    <!-- 配置项， 通过此节点配置日志输出位置（控制台、文件、数据库）、输出格式等-->
+    <!--
+    　　name:标签名，为了让其他标签调用的唯一标示
+    　　class:引用的类，从此类中可以看出该appender标签定义的是日志输出的位置
+    -->
+
+    <!-- 时间滚动输出 level为 CONSOLE 日志 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- 常用
+                  %-数字xxx               分隔多少，不要和属性分开写，不挨着会报错
+                  %d{HH……} | d           日期，分开会报错
+                  %thread                线程
+                  %level | p | le        显示级别
+                  %logger{数字} | c | lo  类文件，虽然和class一样，但是如果包.类很长，这个可以获取简约长度展示
+                  %class | c             输出同上
+                  %file  | F             是哪个.java文件
+                  %m | msg | message     输出信息
+                  %M                     方法
+                  %line  | L             错误的行号，少用
+                  %caller{数字}           输出信息深度
+            -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger %method:%L -%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 时间滚动输出 level为 INFO 日志 -->
+    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件 RollingFileAppender-->
+        <!-- 滚动策略，它根据时间来制定滚动策略.既负责滚动也负责触发滚动 -->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            &lt;!&ndash; 输出路径 &ndash;&gt;
+            <fileNamePattern>${logPath}/info/%d{yyyy-MM-dd}.log</fileNamePattern>
+            &lt;!&ndash; 日志文件保留天数 &ndash;&gt;
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>-->
+        <!-- rollingPolicy按照固定窗口模式生成归档日志文件，当文件大于20MB时，生成新的日志文件。窗口大小是1到3，当保存了3个归档文件后，将覆盖最早的日志。
+            同一个RollingFileAppender中，rollingPolicy只能存在一个有效的-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${logPath}/%d{yyyy-MM-dd}/.log.%i.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex>
+        </rollingPolicy>-->
+        <!-- 查看当前活动文件的大小，如果超过指定大小会告知RollingFileAppender触发当前活动文件滚动 -->
+        <!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>-->
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${logPath}/info/%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <!-- each file should be at most 5MB, keep 30 days worth of history, but at most 20GB -->
+            <maxFileSize>5MB</maxFileSize>
+            <maxHistory>${maxHistory}</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger %method:%L -%msg%n</pattern>
+        </encoder>
+        <!-- 此日志文件只记录info级别的 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>info</level>
+        </filter>
+    </appender>
+
+    <!-- 时间滚动输出 level为 ERROR 日志 -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/error/%d{yyyy-MM-dd}.log</fileNamePattern>
+            &lt;!&ndash; 日志文件保留天数 &ndash;&gt;
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+        &lt;!&ndash; 查看当前活动文件的大小，如果超过指定大小会告知RollingFileAppender触发当前活动文件滚动 &ndash;&gt;
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>-->
+
+        <!-- 日志格式为${logPath}/error/%d{yyyy-MM-dd}.%i.log时，需要按照以下配置：-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${logPath}/error/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- each file should be at most 5MB, keep 30 days worth of history, but at most 20GB -->
+            <maxFileSize>5MB</maxFileSize>
+            <maxHistory>${maxHistory}</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger %method:%L -%msg%n</pattern>
+        </encoder>
+        <!-- 此日志文件只记录error级别的 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+
+    <!-- 时间滚动输出 level为 DEBUG 日志 -->
+    <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/debug/%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 日志文件保留天数 -->
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+        <!-- 查看当前活动文件的大小，如果超过指定大小会告知RollingFileAppender触发当前活动文件滚动 -->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger %method:%L -%msg%n</pattern>
+        </encoder>
+        <!-- 此日志文件只记录debug级别的 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <!-- 时间滚动输出 level为 WARN 日志 -->
+    <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/warn/%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 日志文件保留天数 -->
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+        <!-- 查看当前活动文件的大小，如果超过指定大小会告知RollingFileAppender触发当前活动文件滚动 -->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger %method:%L -%msg%n</pattern>
+        </encoder>
+        <!-- 此日志文件只记录debug级别的 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+    </appender>
+
+    <!-- 根节点，表名基本的日志级别，里面可以由多个appender规则 -->
+    <!-- level="info"代表基础日志级别为info -->
+    <!-- 从高到地低 OFF 、 FATAL 、 ERROR 、 WARN 、 INFO 、 DEBUG 、 TRACE 、 ALL -->
+    <root level="DEBUG">
+        <!-- 引入控制台输出规则 -->
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="INFO" />
+        <appender-ref ref="ERROR" />
+        <appender-ref ref="DEBUG" />
+        <appender-ref ref="WARN" />
+    </root>
+</configuration>

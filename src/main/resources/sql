@@ -1,0 +1,17 @@
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for t_order
+-- ----------------------------
+DROP TABLE IF EXISTS t_order;
+create table t_order
+(
+    order_id   varchar(36) NOT NULL comment '序号' primary key ,
+    order_no   varchar(50) DEFAULT NULL comment '编号',
+    order_date datetime    DEFAULT NULL comment  '日期',
+    order_quantity   int(11)     DEFAULT NULL comment '数量'
+)comment '清单表';
+
+-- ----------------------------
+-- Records of t_order
+-- ----------------------------

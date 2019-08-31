@@ -1,12 +1,15 @@
 package com.kpy.springboot.controller;
 
+import com.kpy.springboot.dao.OrderDao;
 import com.kpy.springboot.model.Order;
+import com.mysql.cj.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +26,9 @@ import java.util.Map;
 // @Controller：用于标注是控制层组件，需要返回页面时请用@Controller而不是@RestController，@Controller只是实例调用，并不携带数据
 public class MainController {
 
+    private static Logger logger = LoggerFactory.getLogger(MainController.class);
+
+
     // @GetMapping、@PostMapping等:相当于@RequestMapping（value=”/”，method=RequestMethod.Get\Post\Put\Delete等）,是个组合注解；
     @GetMapping("/Main")
     public String index(){
@@ -36,11 +42,13 @@ public class MainController {
 
     @GetMapping("/angularJS")
     public String angularJS() {
-        return "angularjs";
+        return "angularJS";
     }
 
+    // @GetMapping、@PostMapping等:相当于@RequestMapping（value=”/”，method=RequestMethod.Get\Post\Put\Delete等）,是个组合注解；
     @PostMapping("/postData")
     public @ResponseBody Map<String,Object> postData(String no,String quantity,String date){
+        logger.info("No:{}", no);
         System.out.println("no:" + no);
         System.out.println("quantity:" + quantity);
         System.out.println("date:" + date);
@@ -60,6 +68,53 @@ public class MainController {
         Map<String, Object> map = new HashMap<>();
         map.put("message", "ok");
         map.put("value", order);
+        return map;
+    }
+
+    @Autowired
+    private OrderDao orderDao;
+
+    @GetMapping("/angularJS-JDBC")
+    public String angularJSJDBC(){
+        return "angularJS-JDBC";
+    }
+
+    @PostMapping("/InsertOrUpdate")
+    public @ResponseBody Map<String, Object> Insert(@RequestBody Order order){
+        logger.debug("Order:{}", order.getNo()+","+order.getDate()+","+order.getQuantity());
+        Map<String, Object> result=new HashMap<>();
+        String id=null;
+        if(StringUtils.isNullOrEmpty(order.getId())){
+            id=orderDao.Insert(order);
+            logger.debug("Id:{}",id);
+            order.setId(id);
+            order.setDate(new Date(order.getDate().getTime()));
+        }
+        else {
+            orderDao.Update(order);
+        }
+        result.put("order", order);
+        logger.debug("order_id:{}",order.getId());
+        return result;
+    }
+
+    @RequestMapping("/SelectOne")
+    public @ResponseBody Object SelectOne(String id){
+        return orderDao.SelectOne(id);
+    }
+
+    @PostMapping("/SelectAll")
+    public @ResponseBody Object SelectAll() {
+        return orderDao.SelectAll();
+    }
+
+    @RequestMapping("/Delete")
+    public @ResponseBody Map<String, Object> Delete(String id){
+        logger.debug("id{}", id);
+        orderDao.Delete(id);
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("message", "ok");
         return map;
     }
 }
