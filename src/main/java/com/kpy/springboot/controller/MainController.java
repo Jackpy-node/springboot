@@ -1,6 +1,7 @@
 package com.kpy.springboot.controller;
 
 import com.kpy.springboot.dao.OrderDao;
+import com.kpy.springboot.dao.OrderRepository;
 import com.kpy.springboot.model.Order;
 import com.mysql.cj.util.StringUtils;
 import org.slf4j.Logger;
@@ -9,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.sql.Date;
 import java.time.ZoneId;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -80,7 +83,7 @@ public class MainController {
     }
 
     @PostMapping("/InsertOrUpdate")
-    public @ResponseBody Map<String, Object> Insert(@RequestBody Order order){
+    public @ResponseBody Map<String, Object> Insert(@RequestBody @Valid  Order order){
         logger.debug("Order:{}", order.getNo()+","+order.getDate()+","+order.getQuantity());
         Map<String, Object> result=new HashMap<>();
         String id=null;
@@ -116,5 +119,38 @@ public class MainController {
         map.put("id", id);
         map.put("message", "ok");
         return map;
+    }
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    /**
+     * like查询
+     * @return
+     */
+    @PostMapping("/findAllByNoLike")
+    public @ResponseBody Object findAllByNoLike(@RequestParam String no) {
+        logger.debug("No:{}", no);
+        List<Order> orderList=orderRepository.findAllByNoLike("%"+no+"%");
+        return orderList;
+    }
+
+    /**
+     *between...and查询
+     */
+    @RequestMapping("/findAllByDateBetween")
+    public @ResponseBody Object findAllByDateBetween(@RequestParam String startDate, @RequestParam String endDate){
+        logger.debug("Date:{}", new Date(Long.parseLong(startDate)));
+        logger.debug("Date:{}", new Date(Long.parseLong(endDate)));
+        return orderRepository.findAllByDateBetween(new Date(Long.parseLong(startDate)), new Date(Long.parseLong(endDate)));
+    }
+
+    /**
+     *less than查询
+     */
+    @PostMapping("/findAllByQuantityLessThan")
+    public @ResponseBody Object findAllByQuantityLessThan(int quantity) {
+        logger.debug("Quantity:{}", quantity);
+        return orderRepository.findAllByQuantityLessThan(quantity);
     }
 }

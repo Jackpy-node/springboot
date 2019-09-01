@@ -1,5 +1,11 @@
 package com.kpy.springboot.model;
 
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 /**
@@ -9,10 +15,29 @@ import java.util.Date;
  * @data: 2019-8-23 21:56
  * @discription: 实体类
  **/
+
+@Entity
+@Table(name="t_order")
 public class Order {
+    @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "order_id", length = 36)
     private String id;
+
+    @Column(name = "order_no", length = 50)
+    @NotNull
+    @Size(min = 1, max = 1000)
     private String no;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "order_date")
+    @NotNull
     private Date date;
+
+    @Column(name = "order_quantity")
+    @NotNull
+    @Min(100)
     private int quantity;
 
     public String getNo() {

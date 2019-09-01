@@ -11,6 +11,13 @@
             MainApp.controller('MainController', function ($scope, $http) {   //function中的参数为AngularJS内置服务
                 $scope.order = {};
                 $scope.rows = [];
+
+                $scope.errors = {
+                    no : '',
+                    date : '',
+                    quantity : ''
+                };
+
                 //插入
                 $scope.Insert = function () {
                     $http({
@@ -28,11 +35,28 @@
                         if (message.order == null) {
                             alert("请输入数据！");
                         } else {
-                            $scope.add(message.order)
-                            //alert("新增成功！");
+                            $scope.add(message.order);
+                            $scope.result = JSON.stringify(message);
                         }
-                    });
-                }
+                    }).error(function(msg){
+                        $scope.result=JSON.stringify(msg);
+                        $scope.errors.no = '';
+                        $scope.errors.date = '';
+                        $scope.errors.quantity = '';
+                        for ( var i in msg.errors) {
+                            var error = msg.errors[i];
+                            console.log("error:" + error.field);
+                            var field = $scope.errors[error.field];
+                            console.log("defaultMessage:" + error.defaultMessage);
+                            if (field == undefined){
+                                continue;
+                            }
+                            else {
+                                $scope.errors[error.field] = error.defaultMessage;
+                            }
+                        }
+                    })
+                };
 
                 //新增成功之后更新界面数据
                 $scope.add = function (order) {
@@ -98,7 +122,7 @@
                         data: $scope.order,
                     }).success(function(msg) {
                         //保存成功后更新数据
-                        console.log("id:",msg.order.id);
+                        //console.log("id:",msg.order.id);
                         $scope.get(msg.order.id);
                     });
                 }
@@ -132,10 +156,50 @@
                         $scope.rows.push(row);
                     }
                 });
+
+                //like模糊查询
+                $scope.findAllByNoLike = function () {
+                    $http({
+                            url: '/findAllByNoLike',
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            data: 'no=' + $scope.order.no
+                        }).success(function (rows) {
+                            $scope.rows = rows;
+                    });
+                };
+                $scope.findAllByDateBetween = function () {
+                    $http({
+                        url:'/findAllByDateBetween',
+                        method:'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        data: 'startDate=' + new Date($scope.order.start).getTime() + "&endDate=" + new Date($scope.order.end).getTime()
+                    }).success(function (rows) {
+                        $scope.rows = rows;
+                    });
+                };
+
+                $scope.findAllByQuantityLessThan = function() {
+                    $http({
+                            url : '/findAllByQuantityLessThan',
+                            method : 'POST',
+                            headers : {
+                                'Content-Type' : 'application/x-www-form-urlencoded'
+                            },
+                            data : 'quantity=' + $scope.order.quantity
+                        }).success(function(rows) {
+                            $scope.rows = rows;
+                    });
+                };
+
             });
         </script>
     </head>
-    <body ng-app="MainApp" ng-controller="MainController" style="font-family: 华文楷体">
+    <body ng-app="MainApp" ng-controller="MainController" style="font-family: 华文楷体;font-size: 18px">
         <h1>SpringBoot——结合JDBC</h1>
         <h3>清单信息</h3>
         <input id="id" type="hidden" ng-model="order.id"/>
@@ -143,17 +207,41 @@
             <tr>
                 <td>编号：</td>
                 <td><input id="no" ng-model="order.no"/></td>
+                <td><div style="color: #ff4b65" ng-show="errors.no">{{errors.no}}</div></td>
+            </tr>
+            <tr>
                 <td>日期：</td>
                 <td><input id="date" ng-model="order.date" type="date"/></td>
+                <td><div style="color: #ff4b65" ng-show="errors.date">{{errors.date}}</div></td>
+            </tr>
+            <tr>
                 <td>数量：</td>
                 <td><input id="quantity" ng-model="order.quantity"/></td>
+                <td><div style="color: #ff4b65" ng-show="errors.quantity">{{errors.quantity}}</div></td>
             </tr>
         </table>
         <br/>
         <input style="border-color: #5060b2; border-radius: 5px; width: 60px;height: 30px" type="button" value="新增" ng-click="Insert()"/>
         <input style="border-color: #5060b2; border-radius: 5px; width: 60px;height: 30px" type="button" value="更新" ng-click="Update()"/>
         <br/>
-        <br/>
+        <h3>AOP表单提交验证结果：{{result}}</h3>
+
+        <h3>条件查询</h3>
+        <table cellspacing="2" style="background-color: #a0c6e5">
+            <tr>
+                <td>编号：<input ng-model="order.no"/></td>
+                <td><input style="border-color: #5060b2; border-radius: 5px; width: 100px;height: 30px" type="button" value="like查询" ng-click="findAllByNoLike()"/></td>
+            </tr>
+            <tr>
+                <td>起始日期：<input ng-model="order.start" type="date"/>&nbsp;&nbsp;终止日期：<input ng-model="order.end" type="date"/></td>
+                <td><input style="border-color: #5060b2; border-radius: 5px; width: 100px;height: 30px" type="button" value="between查询" ng-click="findAllByDateBetween()"/></td>
+            </tr>
+            <tr>
+                <td>数量：<input ng-model="order.quantity" /></td>
+                <td><input style="border-color: #5060b2; border-radius: 5px; width: 100px;height: 30px" type="button" ng-click="findAllByQuantityLessThan()" value="小于查询" /></td>
+            </tr>
+        </table>
+
         <h3>清单列表</h3>
         <table cellspacing="2" style="background-color: cadetblue">
             <tr style="text-align: center; BACKGROUND-COLOR: #F4FAFF; font-weight: bold; height: 30px">
