@@ -27,7 +27,6 @@ public class Order {
 
     @Column(name = "order_no", length = 50)
     @NotNull
-    @Size(min = 1, max = 1000)
     private String no;
 
     @Temporal(TemporalType.DATE)
