@@ -11,6 +11,8 @@
     <groupId>com.kpy</groupId>
     <artifactId>springboot</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <!-- 这里打成war包 若打jar，需将war改为jar -->
+    <packaging>war</packaging>
     <name>springboot</name>
     <description>Demo project for Spring Boot</description>
 
