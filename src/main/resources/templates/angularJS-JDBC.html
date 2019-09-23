@@ -5,7 +5,7 @@
         <title>Spring boot——结合JDBC</title>
         <!--需要点击连接进行download,否则angularJS并不会生效-->
         <script src="https://cdn.staticfile.org/angular.js/1.5.6/angular.min.js"></script>
-        <link href="angularJS-JDBC.css" type="text/css" rel="stylesheet">
+        <link href="css/angularJS-JDBC.css" type="text/css" rel="stylesheet">
         <script>
             var MainApp = angular.module("MainApp", []);    //定义了AngularJS应用
             MainApp.controller('MainController', function ($scope, $http) {   //function中的参数为AngularJS内置服务
@@ -199,7 +199,7 @@
             });
         </script>
     </head>
-    <body ng-app="MainApp" ng-controller="MainController" style="font-family: 华文楷体;font-size: 18px">
+    <body ng-app="MainApp" ng-controller="MainController">
         <h1>SpringBoot——结合JDBC</h1>
         <h3>清单信息</h3>
         <input id="id" type="hidden" ng-model="order.id"/>
