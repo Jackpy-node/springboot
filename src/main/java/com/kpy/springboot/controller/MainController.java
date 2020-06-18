@@ -31,13 +31,11 @@ public class MainController {
 
     private static Logger logger = LoggerFactory.getLogger(MainController.class);
 
-
-    // @GetMapping、@PostMapping等:相当于@RequestMapping（value=”/”，method=RequestMethod.Get\Post\Put\Delete等）,是个组合注解；
-    @GetMapping("/Main")
-    public String index(){
-        return "Main";
+    public MainController(OrderDao orderDao) {
+        this.orderDao = orderDao;
     }
 
+    // @GetMapping、@PostMapping等:相当于@RequestMapping（value=”/”，method=RequestMethod.Get\Post\Put\Delete等）,是个组合注解；
     @GetMapping("/jquery")
     public String jquery(){
         return "jquery";
@@ -74,8 +72,7 @@ public class MainController {
         return map;
     }
 
-    @Autowired
-    private OrderDao orderDao;
+    private final OrderDao orderDao;
 
     @GetMapping("/angularJS-JDBC")
     public String angularJSJDBC(){

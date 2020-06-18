@@ -21,11 +21,6 @@ public class SpringbootController {
     // 返回json数据不需要在方法前面加@ResponseBody注解了，但使用@RestController这个注解，
     // 就不能返回jsp,html页面，视图解析器无法解析jsp,html页面
 
-    @RequestMapping("/hello")
-    public static String hello(){
-        return "Hello Spring Boot";
-    }
-
     @GetMapping("/index")
     public String Index(Model model){
         model.addAttribute("name", "kpy");
