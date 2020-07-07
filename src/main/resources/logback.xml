@@ -156,10 +156,10 @@
     <!-- 从高到地低 OFF 、 FATAL 、 ERROR 、 WARN 、 INFO 、 DEBUG 、 TRACE 、 ALL -->
     <root level="DEBUG">
         <!-- 引入控制台输出规则 -->
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="INFO" />
-        <appender-ref ref="ERROR" />
-        <appender-ref ref="DEBUG" />
-        <appender-ref ref="WARN" />
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="INFO"/>
+        <appender-ref ref="ERROR"/>
+        <appender-ref ref="DEBUG"/>
+        <appender-ref ref="WARN"/>
     </root>
 </configuration>

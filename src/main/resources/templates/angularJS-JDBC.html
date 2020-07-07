@@ -13,9 +13,9 @@
                 $scope.rows = [];
 
                 $scope.errors = {
-                    no : '',
-                    date : '',
-                    quantity : ''
+                    no: '',
+                    date: '',
+                    quantity: ''
                 };
 
                 //插入
@@ -38,20 +38,19 @@
                             $scope.add(message.order);
                             $scope.result = JSON.stringify(message);
                         }
-                    }).error(function(msg){
-                        $scope.result=JSON.stringify(msg);
+                    }).error(function (msg) {
+                        $scope.result = JSON.stringify(msg);
                         $scope.errors.no = '';
                         $scope.errors.date = '';
                         $scope.errors.quantity = '';
-                        for ( var i in msg.errors) {
+                        for (var i in msg.errors) {
                             var error = msg.errors[i];
                             console.log("error:" + error.field);
                             var field = $scope.errors[error.field];
                             console.log("defaultMessage:" + error.defaultMessage);
-                            if (field == undefined){
+                            if (field == undefined) {
                                 continue;
-                            }
-                            else {
+                            } else {
                                 $scope.errors[error.field] = error.defaultMessage;
                             }
                         }
@@ -91,13 +90,13 @@
                 }
 
                 //修改
-                $scope.Edit = function(id) {
-                    for ( var i in $scope.rows) {
+                $scope.Edit = function (id) {
+                    for (var i in $scope.rows) {
                         var row = $scope.rows[i];
                         if (id == row.id) {
                             $scope.order = row;
-                            $scope.order.date=new Date($scope.order.date);
-                            console.log("date",row.date);
+                            $scope.order.date = new Date($scope.order.date);
+                            console.log("date", row.date);
                             $scope.rows = [];
                             //初始化载入数据
                             $http({
@@ -115,12 +114,12 @@
                 }
 
                 //保存修改后数据
-                $scope.Update = function() {
+                $scope.Update = function () {
                     $http({
-                        url : '/InsertOrUpdate',
-                        method : 'POST',
+                        url: '/InsertOrUpdate',
+                        method: 'POST',
                         data: $scope.order,
-                    }).success(function(msg) {
+                    }).success(function (msg) {
                         //保存成功后更新数据
                         //console.log("id:",msg.order.id);
                         $scope.get(msg.order.id);
@@ -128,15 +127,15 @@
                 }
 
                 //重新加载修改后数据
-                $scope.get = function(id) {
+                $scope.get = function (id) {
                     $http({
-                        url : '/SelectOne?id=' + id,
-                        method : 'POST',
-                    }).success(function(order) {
-                        for ( var i in $scope.rows) {
+                        url: '/SelectOne?id=' + id,
+                        method: 'POST',
+                    }).success(function (order) {
+                        for (var i in $scope.rows) {
                             var row = $scope.rows[i];
                             if (order.id == row.id) {
-                                row=order;
+                                row = order;
                                 $scope.rows.push(order);
                                 $scope.rows.splice(Number(i), 1);
                                 return;
@@ -160,20 +159,20 @@
                 //like模糊查询
                 $scope.findAllByNoLike = function () {
                     $http({
-                            url: '/findAllByNoLike',
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            data: 'no=' + $scope.order.no
-                        }).success(function (rows) {
-                            $scope.rows = rows;
+                        url: '/findAllByNoLike',
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        data: 'no=' + $scope.order.no
+                    }).success(function (rows) {
+                        $scope.rows = rows;
                     });
                 };
                 $scope.findAllByDateBetween = function () {
                     $http({
-                        url:'/findAllByDateBetween',
-                        method:'POST',
+                        url: '/findAllByDateBetween',
+                        method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
@@ -183,16 +182,16 @@
                     });
                 };
 
-                $scope.findAllByQuantityLessThan = function() {
+                $scope.findAllByQuantityLessThan = function () {
                     $http({
-                            url : '/findAllByQuantityLessThan',
-                            method : 'POST',
-                            headers : {
-                                'Content-Type' : 'application/x-www-form-urlencoded'
-                            },
-                            data : 'quantity=' + $scope.order.quantity
-                        }).success(function(rows) {
-                            $scope.rows = rows;
+                        url: '/findAllByQuantityLessThan',
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        data: 'quantity=' + $scope.order.quantity
+                    }).success(function (rows) {
+                        $scope.rows = rows;
                     });
                 };
 
@@ -207,22 +206,30 @@
             <tr>
                 <td>编号：</td>
                 <td><input id="no" ng-model="order.no"/></td>
-                <td><div style="color: #ff4b65" ng-show="errors.no">{{errors.no}}</div></td>
+                <td>
+                    <div style="color: #ff4b65" ng-show="errors.no">{{errors.no}}</div>
+                </td>
             </tr>
             <tr>
                 <td>日期：</td>
                 <td><input id="date" ng-model="order.date" type="date"/></td>
-                <td><div style="color: #ff4b65" ng-show="errors.date">{{errors.date}}</div></td>
+                <td>
+                    <div style="color: #ff4b65" ng-show="errors.date">{{errors.date}}</div>
+                </td>
             </tr>
             <tr>
                 <td>数量：</td>
                 <td><input id="quantity" ng-model="order.quantity"/></td>
-                <td><div style="color: #ff4b65" ng-show="errors.quantity">{{errors.quantity}}</div></td>
+                <td>
+                    <div style="color: #ff4b65" ng-show="errors.quantity">{{errors.quantity}}</div>
+                </td>
             </tr>
         </table>
         <br/>
-        <input style="border-color: #5060b2; border-radius: 5px; width: 60px;height: 30px" type="button" value="新增" ng-click="Insert()"/>
-        <input style="border-color: #5060b2; border-radius: 5px; width: 60px;height: 30px" type="button" value="更新" ng-click="Update()"/>
+        <input style="border-color: #5060b2; border-radius: 5px; width: 60px;height: 30px" type="button" value="新增"
+               ng-click="Insert()"/>
+        <input style="border-color: #5060b2; border-radius: 5px; width: 60px;height: 30px" type="button" value="更新"
+               ng-click="Update()"/>
         <br/>
         <h3>AOP表单提交验证结果：{{result}}</h3>
 
@@ -230,15 +237,19 @@
         <table cellspacing="2" style="background-color: #a0c6e5">
             <tr>
                 <td>编号：<input ng-model="order.no"/></td>
-                <td><input style="border-color: #5060b2; border-radius: 5px; width: 100px;height: 30px" type="button" value="like查询" ng-click="findAllByNoLike()"/></td>
+                <td><input style="border-color: #5060b2; border-radius: 5px; width: 100px;height: 30px" type="button"
+                           value="like查询" ng-click="findAllByNoLike()"/></td>
             </tr>
             <tr>
-                <td>起始日期：<input ng-model="order.start" type="date"/>&nbsp;&nbsp;终止日期：<input ng-model="order.end" type="date"/></td>
-                <td><input style="border-color: #5060b2; border-radius: 5px; width: 100px;height: 30px" type="button" value="between查询" ng-click="findAllByDateBetween()"/></td>
+                <td>起始日期：<input ng-model="order.start" type="date"/>&nbsp;&nbsp;终止日期：<input ng-model="order.end"
+                                                                                            type="date"/></td>
+                <td><input style="border-color: #5060b2; border-radius: 5px; width: 100px;height: 30px" type="button"
+                           value="between查询" ng-click="findAllByDateBetween()"/></td>
             </tr>
             <tr>
-                <td>数量：<input ng-model="order.quantity" /></td>
-                <td><input style="border-color: #5060b2; border-radius: 5px; width: 100px;height: 30px" type="button" ng-click="findAllByQuantityLessThan()" value="小于查询" /></td>
+                <td>数量：<input ng-model="order.quantity"/></td>
+                <td><input style="border-color: #5060b2; border-radius: 5px; width: 100px;height: 30px" type="button"
+                           ng-click="findAllByQuantityLessThan()" value="小于查询"/></td>
             </tr>
         </table>
 

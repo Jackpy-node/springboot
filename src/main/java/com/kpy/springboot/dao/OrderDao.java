@@ -27,15 +27,14 @@ public class OrderDao {
 
     private static Logger logger = LoggerFactory.getLogger(OrderDao.class);
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;  //数据库操作实例
 
     //新增
     public String Insert(Order order) {
-        if(StringUtils.isEmpty(order.getNo())){
+        if (StringUtils.isEmpty(order.getNo())) {
             return null;
         }
-        if(StringUtils.isEmpty(order.getDate())){
+        if (StringUtils.isEmpty(order.getDate())) {
             order.setDate(new Date(new java.util.Date().getTime()));
         }
         String id = UUID.randomUUID().toString();
@@ -61,12 +60,12 @@ public class OrderDao {
     }
 
     //查询所有
-    public List<Order> SelectAll(){
-        List<Order> orderList=new ArrayList<>();
-        String sql="select * from t_order";
-        SqlRowSet rowSet=jdbcTemplate.queryForRowSet(sql, new Object[]{});
-        while(rowSet.next()){
-            Order order=new Order();
+    public List<Order> SelectAll() {
+        List<Order> orderList = new ArrayList<>();
+        String sql = "select * from t_order";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, new Object[]{});
+        while (rowSet.next()) {
+            Order order = new Order();
             order.setId(rowSet.getString("order_id"));
             order.setNo(rowSet.getString("order_no"));
             order.setDate(rowSet.getDate("order_date"));
@@ -77,11 +76,11 @@ public class OrderDao {
     }
 
     //查询单条
-    public Order SelectOne(String id){
-        Order order=new Order();
-        String sql="select * from t_order where order_id=?";
-        SqlRowSet rowSet=jdbcTemplate.queryForRowSet(sql, new Object[]{id});
-        while(rowSet.next()){
+    public Order SelectOne(String id) {
+        Order order = new Order();
+        String sql = "select * from t_order where order_id=?";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, new Object[]{id});
+        while (rowSet.next()) {
             order.setId(rowSet.getString("order_id"));
             order.setNo(rowSet.getString("order_no"));
             order.setDate(rowSet.getDate("order_date"));

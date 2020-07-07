@@ -16,18 +16,19 @@ import java.util.Map;
  * @discription:
  **/
 public class AopAspect {
-    private static Logger logger= LoggerFactory.getLogger(AopAspect.class);
+    private static Logger logger = LoggerFactory.getLogger(AopAspect.class);
+
     @Around("execution(Map com.kpy.springboot.controller.MainController.*(..))")
-    public Object invoke(ProceedingJoinPoint proceedingJoinPoint){
-        Map<String,Object> map=null;
+    public Object invoke(ProceedingJoinPoint proceedingJoinPoint) {
+        Map<String, Object> map = null;
         try {
-            Object[] args=proceedingJoinPoint.getArgs();
-            logger.debug("args:{}",args);
-            Object val=proceedingJoinPoint.proceed(args);
-            map= (Map<String, Object>) val;
+            Object[] args = proceedingJoinPoint.getArgs();
+            logger.debug("args:{}", args);
+            Object val = proceedingJoinPoint.proceed(args);
+            map = (Map<String, Object>) val;
         } catch (Throwable throwable) {
             throwable.printStackTrace();
-            map=new HashMap<>();
+            map = new HashMap<>();
             logger.debug("throwable.msg:{}", throwable.toString());
             map.put("msg", throwable.toString());
         }

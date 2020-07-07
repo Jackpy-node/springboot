@@ -22,7 +22,7 @@ public class SpringbootController {
     // 就不能返回jsp,html页面，视图解析器无法解析jsp,html页面
 
     @GetMapping("/index")
-    public String Index(Model model){
+    public String Index(Model model) {
         model.addAttribute("name", "kpy");
         return "index";
     }

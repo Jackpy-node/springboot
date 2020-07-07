@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="cn.sunline.lttsclipse.base.launchConfigurationType.web">
+<stringAttribute key="bad_container_name" value="\v7test\src\main\resour"/>
+<stringAttribute key="jvmId" value="test"/>
+<stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.m2e.launchconfig.classpathProvider2"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="cn.sunline.ltts.web.main.StartWebServer"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="v7test"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider2"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms1024m -Xmx1024m -XX:PermSize=128M -XX:MaxPermSize=256m -Dlog4j.configurationFile=ltts_log_dev.xml -Dltts.log.home=logs"/>
+<stringAttribute key="projectName" value="v7test"/>
+</launchConfiguration>

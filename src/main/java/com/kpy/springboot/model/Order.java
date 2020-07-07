@@ -16,7 +16,7 @@ import java.util.Date;
  **/
 
 @Entity
-@Table(name="t_order")
+@Table(name = "t_order")
 public class Order {
     @Id
     @GeneratedValue(generator = "uuid")
