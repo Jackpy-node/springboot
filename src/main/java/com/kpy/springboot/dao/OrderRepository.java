@@ -13,10 +13,11 @@ import java.util.List;
  * @data: 2019-8-31 11:21
  * @discription: JPA持久层框架
  **/
-public interface OrderRepository extends JpaRepository<Order,String>{
+public interface OrderRepository extends JpaRepository<Order, String> {
 
     /**
      * like查询
+     *
      * @param no
      * @return
      */
@@ -24,6 +25,7 @@ public interface OrderRepository extends JpaRepository<Order,String>{
 
     /**
      * between查询
+     *
      * @param startDate
      * @param endDate
      * @return
@@ -32,6 +34,7 @@ public interface OrderRepository extends JpaRepository<Order,String>{
 
     /**
      * 小于查询
+     *
      * @param quantity
      * @return
      */

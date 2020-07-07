@@ -37,7 +37,7 @@ public class MainController {
 
     // @GetMapping、@PostMapping等:相当于@RequestMapping（value=”/”，method=RequestMethod.Get\Post\Put\Delete等）,是个组合注解；
     @GetMapping("/jquery")
-    public String jquery(){
+    public String jquery() {
         return "jquery";
     }
 
@@ -48,13 +48,14 @@ public class MainController {
 
     // @GetMapping、@PostMapping等:相当于@RequestMapping（value=”/”，method=RequestMethod.Get\Post\Put\Delete等）,是个组合注解；
     @PostMapping("/postData")
-    public @ResponseBody Map<String,Object> postData(String no,String quantity,String date){
+    public @ResponseBody
+    Map<String, Object> postData(String no, String quantity, String date) {
         logger.info("No:{}", no);
         System.out.println("no:" + no);
         System.out.println("quantity:" + quantity);
         System.out.println("date:" + date);
-        Map<String,Object> map=new HashMap<>();
-        map.put("message","ok");
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", "ok");
         map.put("no", no);
         map.put("quantity", quantity);
         map.put("date", date);
@@ -62,7 +63,8 @@ public class MainController {
     }
 
     @PostMapping("/postJson")
-    public @ResponseBody Map<String, Object> postJson(@RequestBody Order order) {
+    public @ResponseBody
+    Map<String, Object> postJson(@RequestBody Order order) {
         System.out.println("order no:" + order.getNo());
         System.out.println("order quantity:" + order.getQuantity());
         System.out.println("order date:" + order.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
@@ -75,41 +77,44 @@ public class MainController {
     private final OrderDao orderDao;
 
     @GetMapping("/angularJS-JDBC")
-    public String angularJSJDBC(){
+    public String angularJSJDBC() {
         return "angularJS-JDBC";
     }
 
     @PostMapping("/InsertOrUpdate")
-    public @ResponseBody Map<String, Object> Insert(@RequestBody @Valid  Order order){
-        logger.debug("Order:{}", order.getNo()+","+order.getDate()+","+order.getQuantity());
-        Map<String, Object> result=new HashMap<>();
-        String id=null;
-        if(StringUtils.isNullOrEmpty(order.getId())){
-            id=orderDao.Insert(order);
-            logger.debug("Id:{}",id);
+    public @ResponseBody
+    Map<String, Object> Insert(@RequestBody @Valid Order order) {
+        logger.debug("Order:{}", order.getNo() + "," + order.getDate() + "," + order.getQuantity());
+        Map<String, Object> result = new HashMap<>();
+        String id = null;
+        if (StringUtils.isNullOrEmpty(order.getId())) {
+            id = orderDao.Insert(order);
+            logger.debug("Id:{}", id);
             order.setId(id);
             order.setDate(new Date(order.getDate().getTime()));
-        }
-        else {
+        } else {
             orderDao.Update(order);
         }
         result.put("order", order);
-        logger.debug("order_id:{}",order.getId());
+        logger.debug("order_id:{}", order.getId());
         return result;
     }
 
     @RequestMapping("/SelectOne")
-    public @ResponseBody Object SelectOne(String id){
+    public @ResponseBody
+    Object SelectOne(String id) {
         return orderDao.SelectOne(id);
     }
 
     @PostMapping("/SelectAll")
-    public @ResponseBody Object SelectAll() {
+    public @ResponseBody
+    Object SelectAll() {
         return orderDao.SelectAll();
     }
 
     @RequestMapping("/Delete")
-    public @ResponseBody Map<String, Object> Delete(String id){
+    public @ResponseBody
+    Map<String, Object> Delete(String id) {
         logger.debug("id{}", id);
         orderDao.Delete(id);
         Map<String, Object> map = new HashMap<>();
@@ -123,30 +128,34 @@ public class MainController {
 
     /**
      * like查询
+     *
      * @return
      */
     @PostMapping("/findAllByNoLike")
-    public @ResponseBody Object findAllByNoLike(@RequestParam String no) {
+    public @ResponseBody
+    Object findAllByNoLike(@RequestParam String no) {
         logger.debug("No:{}", no);
-        List<Order> orderList=orderRepository.findAllByNoLike("%"+no+"%");
+        List<Order> orderList = orderRepository.findAllByNoLike("%" + no + "%");
         return orderList;
     }
 
     /**
-     *between...and查询
+     * between...and查询
      */
     @RequestMapping("/findAllByDateBetween")
-    public @ResponseBody Object findAllByDateBetween(@RequestParam String startDate, @RequestParam String endDate){
+    public @ResponseBody
+    Object findAllByDateBetween(@RequestParam String startDate, @RequestParam String endDate) {
         logger.debug("Date:{}", new Date(Long.parseLong(startDate)));
         logger.debug("Date:{}", new Date(Long.parseLong(endDate)));
         return orderRepository.findAllByDateBetween(new Date(Long.parseLong(startDate)), new Date(Long.parseLong(endDate)));
     }
 
     /**
-     *less than查询
+     * less than查询
      */
     @PostMapping("/findAllByQuantityLessThan")
-    public @ResponseBody Object findAllByQuantityLessThan(int quantity) {
+    public @ResponseBody
+    Object findAllByQuantityLessThan(int quantity) {
         logger.debug("Quantity:{}", quantity);
         return orderRepository.findAllByQuantityLessThan(quantity);
     }
